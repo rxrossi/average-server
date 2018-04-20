@@ -1,10 +1,10 @@
 const fetch = require("isomorphic-fetch");
 const setupServer = require("../../app");
+const { HOST, PORT } = require("../../config");
 
 let server;
 
-const PORT = 5000;
-const BASE_URL = "http://localhost:" + PORT;
+const BASE_URL = HOST + ":" + PORT;
 
 describe("Routes tests", () => {
   beforeEach(async done => {
