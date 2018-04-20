@@ -5,17 +5,19 @@
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
-    "test": "jest"
+    "test": "jest --runInBand"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "bcryptjs": "^2.4.3",
     "body-parser": "^1.18.2",
     "dotenv": "^5.0.1",
     "express": "^4.16.3",
     "express-promise-router": "^3.0.2",
     "joi": "^13.2.0",
-    "joi-errors-for-forms": "^0.2.6"
+    "joi-errors-for-forms": "^0.2.6",
+    "mongoose": "^5.0.15"
   },
   "devDependencies": {
     "isomorphic-fetch": "^2.2.1",

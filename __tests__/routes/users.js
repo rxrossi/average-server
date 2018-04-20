@@ -1,5 +1,7 @@
 const setupServer = require("../../app");
-const fetch = require('../../testHelpers/fetch')
+const fetch = require('../../testHelpers/fetch');
+const User = require('../../app/users/model');
+const mongoose = require('mongoose');
 const { HOST, PORT } = require("../../config");
 
 let server;
@@ -20,6 +22,8 @@ describe("Users routes", () => {
   });
 
   afterEach(async done => {
+    await mongoose.connection.dropDatabase()
+    await mongoose.connection.close()
     await server.close();
     done();
   });
@@ -55,6 +59,37 @@ describe("Users routes", () => {
         message: "Passwords does not match"
       });
     });
+
+    test('actually save to the database', async () => {
+      const { response } = await fetch(SIGNUP_ENDPOINT, {
+        method: 'POST',
+        headers,
+        body: JSON.stringify({
+          email: 'user@mail.com',
+          password: 'pw1',
+          confirmPassword: 'pw1'
+        })
+      })
+
+      expect(response).toHaveProperty('token');
+    });
+
+    test('do not allow duplicates', async () => {
+      const userSaveFn = () => fetch(SIGNUP_ENDPOINT, {
+        method: 'POST',
+        headers,
+        body: JSON.stringify({
+          email: 'user@mail.com',
+          password: 'pw1',
+          confirmPassword: 'pw1'
+        })
+      });
+
+      await userSaveFn();
+      const { error } = await userSaveFn();
+
+      expect(error).toEqual({ message: "Email is already in use" });
+    })
   });
 
   describe("SignIn", () => {
@@ -70,9 +105,7 @@ describe("Users routes", () => {
         }
       )
 
-      expect(error).toEqual({
-        message: "Invalid credentials"
-      });
+      expect(error).toEqual({ message: "Invalid credentials" });
     });
   });
 });
