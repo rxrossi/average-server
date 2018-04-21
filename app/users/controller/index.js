@@ -1,26 +1,39 @@
-const User = require('../../users/model')
-const { signToken } = require('../../../passport')
+const passport = require("passport");
+const User = require("../../users/model");
+const { signToken } = require("../../../passport");
 
 module.exports = {
   signIn,
-  signUp,
-}
+  signUp
+};
 
 function signIn(req, res) {
+  if (req.user) {
+    return res.json({
+      response: {
+        token: signToken(req.user)
+      }
+    });
+  }
+
   return res.json({
-    error: { message: "Invalid credentials" }
+    error: {
+      message: "Invalid credentials"
+    }
   });
 }
 
 async function signUp(req, res) {
-  const {email, password, confirmPassword } = req.body;
+  const { email, password, confirmPassword } = req.body;
 
   // Check if there is a user with the same email
   const foundUser = await User.findOne({ email });
   if (foundUser) {
-    return res.status(403).json({ error: {
-      message: 'Email is already in use'
-    }});
+    return res.status(403).json({
+      error: {
+        message: "Email is already in use"
+      }
+    });
   }
 
   if (password !== confirmPassword) {
@@ -37,14 +50,13 @@ async function signUp(req, res) {
       if (!err) {
         const token = signToken(user);
         return res.json({
-          response: {token}
+          response: { token }
         });
       }
     });
-  } catch(e) {
+  } catch (e) {
     return res.json({
       error: { message: "Could not create the account" }
     });
   }
-
 }

@@ -12,7 +12,7 @@ module.exports = {
       if (result.error) {
         return res.status(400).json({
           error: {
-            fields: toFormFeedback(result.error.details),
+            fields: toFormFeedback(result.error.details)
           }
         });
       }
@@ -28,10 +28,21 @@ module.exports = {
         .email()
         .required()
         .label("Email"),
-      password: Joi.string().required().label("Password"),
+      password: Joi.string()
+        .required()
+        .label("Password"),
       confirmPassword: Joi.string()
         .required()
         .label("Confirm password")
+    }),
+    signIn: Joi.object().keys({
+      email: Joi.string()
+        .email()
+        .required()
+        .label("Email"),
+      password: Joi.string()
+        .required()
+        .label("Password")
     })
   }
 };
@@ -39,7 +50,7 @@ module.exports = {
 function toFormFeedback(arr) {
   const errors = {};
   arr.forEach(x => {
-    changeObject(errors, x.message, x.path)
+    changeObject(errors, x.message, x.path);
   });
   return errors;
 }

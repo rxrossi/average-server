@@ -9,7 +9,14 @@ module.exports = function fetchHelper(endpoint, opts) {
       if (res.status === 500) {
         return { error: { message: "Server error (500)" } };
       }
-      return res.json()
+
+      try {
+        return res.json();
+      } catch (e) {
+        if (res.status >= 300) {
+          return { error: { message: `error (${res.status})` } };
+        }
+      }
     })
-    .catch(e => console.log('fetch error', e));
-}
+    .catch(e => console.log(e));
+};

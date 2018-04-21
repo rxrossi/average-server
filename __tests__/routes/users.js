@@ -1,9 +1,9 @@
-const JWT = require('jsonwebtoken');
-const config = require('../../config');
+const JWT = require("jsonwebtoken");
+const config = require("../../config");
 const setupServer = require("../../app");
-const fetch = require('../../testHelpers/fetch');
-const User = require('../../app/users/model');
-const mongoose = require('mongoose');
+const fetch = require("../../testHelpers/fetch");
+const User = require("../../app/users/model");
+const mongoose = require("mongoose");
 const { HOST, PORT } = require("../../config");
 
 let server;
@@ -13,9 +13,9 @@ const SIGNIN_ENDPOINT = USERS_ENDPOINT + "/signin";
 const SIGNUP_ENDPOINT = USERS_ENDPOINT + "/signup";
 
 const headers = {
-  'Accept': 'application/json, text/plain, */*',
-  'Content-Type': 'application/json'
-}
+  Accept: "application/json, text/plain, */*",
+  "Content-Type": "application/json"
+};
 
 describe("Users routes", () => {
   beforeEach(async done => {
@@ -24,8 +24,8 @@ describe("Users routes", () => {
   });
 
   afterEach(async done => {
-    await mongoose.connection.dropDatabase()
-    await mongoose.connection.close()
+    await mongoose.connection.dropDatabase();
+    await mongoose.connection.close();
     await server.close();
     done();
   });
@@ -33,94 +33,137 @@ describe("Users routes", () => {
   describe("SignUp", () => {
     test("empty fields", async () => {
       const { error } = await fetch(SIGNUP_ENDPOINT, {
-        method: 'POST',
-        headers,
-      })
+        method: "POST",
+        headers
+      });
 
       expect(error).toEqual({
         fields: {
           email: '"Email" is required',
           password: '"Password" is required',
-          confirmPassword: '"Confirm password" is required',
+          confirmPassword: '"Confirm password" is required'
         }
       });
     });
 
-    test('case passwords does not match', async () => {
+    test("case passwords does not match", async () => {
       const { error } = await fetch(SIGNUP_ENDPOINT, {
-        method: 'POST',
+        method: "POST",
         headers,
         body: JSON.stringify({
-          email: 'user@mail.com',
-          password: 'pw1',
-          confirmPassword: 'pw2'
+          email: "user@mail.com",
+          password: "pw1",
+          confirmPassword: "pw2"
         })
-      })
+      });
 
       expect(error).toEqual({
         message: "Passwords does not match"
       });
     });
 
-    test('actually save to the database', async () => {
+    test("actually save to the database", async () => {
       const { response } = await fetch(SIGNUP_ENDPOINT, {
-        method: 'POST',
+        method: "POST",
         headers,
         body: JSON.stringify({
-          email: 'user@mail.com',
-          password: 'pw1',
-          confirmPassword: 'pw1'
-        })
-      })
-
-      expect(response).toHaveProperty('token');
-    });
-
-    test('do not allow duplicates', async () => {
-      const userSaveFn = () => fetch(SIGNUP_ENDPOINT, {
-        method: 'POST',
-        headers,
-        body: JSON.stringify({
-          email: 'user@mail.com',
-          password: 'pw1',
-          confirmPassword: 'pw1'
+          email: "user@mail.com",
+          password: "pw1",
+          confirmPassword: "pw1"
         })
       });
+
+      expect(response).toHaveProperty("token");
+    });
+
+    test("do not allow duplicates", async () => {
+      const userSaveFn = () =>
+        fetch(SIGNUP_ENDPOINT, {
+          method: "POST",
+          headers,
+          body: JSON.stringify({
+            email: "user@mail.com",
+            password: "pw1",
+            confirmPassword: "pw1"
+          })
+        });
 
       await userSaveFn();
       const { error } = await userSaveFn();
 
       expect(error).toEqual({ message: "Email is already in use" });
-    })
+    });
 
-    test('the token of signUp is valid', async () => {
+    test("the token of signUp is valid", async () => {
       const { response: { token } } = await fetch(SIGNUP_ENDPOINT, {
-        method: 'POST',
+        method: "POST",
         headers,
         body: JSON.stringify({
-          email: 'user@mail.com',
-          password: 'pw1',
-          confirmPassword: 'pw1'
+          email: "user@mail.com",
+          password: "pw1",
+          confirmPassword: "pw1"
         })
-      })
-      JWT.verify(token, config.JWT_SECRET)
+      });
+
+      JWT.verify(token, config.JWT_SECRET);
     });
   });
 
-  describe("SignIn", () => {
+  describe("SignIn", async () => {
     test("with incorrect credentials", async () => {
-      const { error } = await fetch(
-        SIGNIN_ENDPOINT, {
-          method: 'POST',
-          headers,
-          body: JSON.stringify({
-            email: "invalid@mail.com",
-            password: "invalid"
-          })
-        }
-      )
+      const { error } = await fetch(SIGNIN_ENDPOINT, {
+        method: "POST",
+        headers,
+        body: JSON.stringify({
+          email: "invalid@mail.com",
+          password: "invalid"
+        })
+      });
 
       expect(error).toEqual({ message: "Invalid credentials" });
+    });
+
+    test("returns validation errors for empty filds", async () => {
+      const { error } = await fetch(SIGNIN_ENDPOINT, {
+        method: "POST",
+        headers
+      });
+
+      const expectedError = {
+        fields: {
+          email: '"Email" is required',
+          password: '"Password" is required'
+        }
+      };
+
+      expect(error).toEqual(expectedError);
+    });
+
+    test("can actually signIn", async () => {
+      const user = {
+        email: "user@mail.com",
+        password: "pw1",
+        confirmPassword: "pw1"
+      };
+
+      // Create a user
+      await fetch(SIGNUP_ENDPOINT, {
+        method: "POST",
+        headers,
+        body: JSON.stringify(user)
+      });
+
+      // Can signin with the credentials
+      const { response: { token } } = await fetch(SIGNIN_ENDPOINT, {
+        method: "POST",
+        headers,
+        body: JSON.stringify({
+          email: user.email,
+          password: user.password
+        })
+      });
+
+      JWT.verify(token, config.JWT_SECRET);
     });
   });
 });
