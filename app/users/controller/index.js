@@ -1,4 +1,5 @@
 const User = require('../../users/model')
+const { signToken } = require('../../../passport')
 
 module.exports = {
   signIn,
@@ -34,8 +35,9 @@ async function signUp(req, res) {
   try {
     await user.save((err, x) => {
       if (!err) {
+        const token = signToken(user);
         return res.json({
-          response: { token: "a token" }
+          response: {token}
         });
       }
     });

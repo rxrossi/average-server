@@ -1,3 +1,5 @@
+const JWT = require('jsonwebtoken');
+const config = require('../../config');
 const setupServer = require("../../app");
 const fetch = require('../../testHelpers/fetch');
 const User = require('../../app/users/model');
@@ -90,6 +92,19 @@ describe("Users routes", () => {
 
       expect(error).toEqual({ message: "Email is already in use" });
     })
+
+    test('the token of signUp is valid', async () => {
+      const { response: { token } } = await fetch(SIGNUP_ENDPOINT, {
+        method: 'POST',
+        headers,
+        body: JSON.stringify({
+          email: 'user@mail.com',
+          password: 'pw1',
+          confirmPassword: 'pw1'
+        })
+      })
+      JWT.verify(token, config.JWT_SECRET)
+    });
   });
 
   describe("SignIn", () => {
