@@ -5,45 +5,38 @@ const joiOpts = {
   abortEarly: false
 };
 
+const email = Joi.string()
+  .email()
+  .required()
+  .label("Email");
+
+const password = Joi.string()
+  .required()
+  .label("Password");
+
+const confirmPassword = Joi.string()
+  .required()
+  .label("Confirm password");
+
 module.exports = {
   validateBody: schema => {
     return (req, res, next) => {
       const result = Joi.validate(req.body, schema, joiOpts);
       if (result.error) {
+        const fields = toFormFeedback(result.error.details);
         return res.status(400).json({
           error: {
-            fields: toFormFeedback(result.error.details)
+            fields
           }
         });
       }
-      // if (!req.value) { req.value = {}; }
-      // req.value['body'] = result.value;
       next();
     };
   },
 
   schemas: {
-    signUp: Joi.object().keys({
-      email: Joi.string()
-        .email()
-        .required()
-        .label("Email"),
-      password: Joi.string()
-        .required()
-        .label("Password"),
-      confirmPassword: Joi.string()
-        .required()
-        .label("Confirm password")
-    }),
-    signIn: Joi.object().keys({
-      email: Joi.string()
-        .email()
-        .required()
-        .label("Email"),
-      password: Joi.string()
-        .required()
-        .label("Password")
-    })
+    signUp: Joi.object().keys({ email, password, confirmPassword }),
+    signIn: Joi.object().keys({ email, password })
   }
 };
 

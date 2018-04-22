@@ -12,6 +12,7 @@
   "dependencies": {
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.18.2",
+    "cors": "^2.8.4",
     "dotenv": "^5.0.1",
     "express": "^4.16.3",
     "express-promise-router": "^3.0.2",
@@ -19,6 +20,7 @@
     "joi-errors-for-forms": "^0.2.6",
     "jsonwebtoken": "^8.2.1",
     "mongoose": "^5.0.15",
+    "morgan": "^1.9.0",
     "passport": "^0.4.0",
     "passport-jwt": "^4.0.0",
     "passport-local": "^1.0.0"
