@@ -56,7 +56,7 @@ passport.use(
   )
 );
 
-signToken = user => {
+const signToken = user => {
   return JWT.sign(
     {
       iss: config.JWT_ISS,
@@ -68,6 +68,22 @@ signToken = user => {
   );
 };
 
+const requireAuthMiddleware = (req, res, next) =>
+  passport.authenticate("jwt", { session: false }, (err, user) => {
+    if (!user) {
+      return res.status(401).json({
+        error: {
+          message: "Unauthorized",
+          code: 401
+        }
+      });
+    }
+    req.user = user;
+    next();
+  })(req);
+
 module.exports = {
-  signToken
+  signToken,
+  passport,
+  requireAuthMiddleware
 };

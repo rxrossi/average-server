@@ -6,7 +6,7 @@ const cors = require("cors");
 const app = express();
 
 app.use(bodyParser.json());
-app.use(morgan("tiny"));
+// app.use(morgan("tiny"));
 app.use(cors());
 
 app.get("/", (req, res) => {
@@ -14,6 +14,8 @@ app.get("/", (req, res) => {
 });
 
 app.use("/users", require("./users/routes"));
+
+app.use("/articles", require("./articles/routes"));
 
 module.exports = port =>
   mongoose.connect("mongodb://localhost/average").then(() => app.listen(port));

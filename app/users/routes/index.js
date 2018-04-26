@@ -3,6 +3,7 @@ const controller = require("../controller");
 const { validateBody, schemas } = require("../../JoiValidator");
 require("../../../passport");
 const passport = require("passport");
+
 const passportSignIn = (req, res, next) =>
   passport.authenticate("local", { session: false }, (err, user) => {
     req.user = user;
