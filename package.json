@@ -20,6 +20,7 @@
     "joi-errors-for-forms": "^0.2.6",
     "jsonwebtoken": "^8.2.1",
     "mongoose": "^5.0.15",
+    "mongoose-unique-validator": "^2.0.1",
     "morgan": "^1.9.0",
     "passport": "^0.4.0",
     "passport-jwt": "^4.0.0",

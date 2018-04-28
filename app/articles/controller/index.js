@@ -2,8 +2,11 @@ const Article = require("../model");
 
 module.exports = {
   getAll,
+  getByLink,
   create
 };
+
+const defaultPopulate = { path: "author" };
 
 async function create(req, res) {
   const { content } = req.body;
@@ -41,8 +44,18 @@ async function create(req, res) {
 }
 
 async function getAll(req, res) {
-  const articles = await Article.find({});
+  const articles = await Article.find({}).populate(defaultPopulate);
   return res.json({
     response: { articles }
+  });
+}
+
+async function getByLink(req, res) {
+  const { link } = req.params;
+  const article = await Article.findOne({ link }).populate(defaultPopulate);
+  return res.json({
+    response: {
+      article
+    }
   });
 }

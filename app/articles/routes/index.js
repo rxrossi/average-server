@@ -7,4 +7,6 @@ router
   .get(controller.getAll)
   .post(requireAuthMiddleware, controller.create);
 
+router.route("/:link").get(controller.getByLink);
+
 module.exports = router;
