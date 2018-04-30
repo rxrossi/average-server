@@ -18,7 +18,7 @@ function setupFileStorageRoutes(app, route = "/files") {
       });
     }
     const file = req.files.file;
-    const fileName = Date.now() + file.name;
+    const fileName = Date.now() + file.name.split(" ").join("_");
 
     //move the file
     const filePath = path.join(storage, fileName);
