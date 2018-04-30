@@ -1,6 +1,7 @@
 const express = require("express");
 const fileUpload = require("express-fileupload");
 const path = require("path");
+
 const storage = path.join(process.cwd(), `fileStorage`);
 
 module.exports = setupFileStorageRoutes;
@@ -8,7 +9,7 @@ module.exports = setupFileStorageRoutes;
 function setupFileStorageRoutes(app, route = "/files") {
   app.use(fileUpload());
 
-  app.post(route, (req, res) => {
+  app.post(route, async (req, res) => {
     if (!req.files) {
       return res.status(422).json({
         error: {
@@ -22,12 +23,14 @@ function setupFileStorageRoutes(app, route = "/files") {
     //move the file
     const filePath = path.join(storage, fileName);
 
-    file.mv(filePath, err => {
-      if (err) {
-        console.error("err", err);
-        return res.status(500).json(err);
-      }
-    });
+    const err = await file.mv(filePath);
+    if (err) {
+      return res.status(500).json({
+        error: {
+          message: err
+        }
+      });
+    }
 
     res.json({
       response: {
