@@ -28,6 +28,7 @@
     "passport-local": "^1.0.0"
   },
   "devDependencies": {
+    "form-data": "^2.3.2",
     "isomorphic-fetch": "^2.2.1",
     "jest": "^22.4.3"
   }

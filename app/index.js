@@ -7,7 +7,7 @@ const morgan = require("morgan");
 const cors = require("cors");
 const app = express();
 
-const storage = path.join(__dirname, `files`);
+const storage = path.join(process.cwd(), `fileStorage`);
 
 app.use(bodyParser.json());
 // app.use(morgan("tiny"));
@@ -34,7 +34,7 @@ app.post("/files", (req, res) => {
 
   file.mv(filePath, err => {
     if (err) {
-      console.log("err", err);
+      console.error("err", err);
       return res.status(500).json(err);
     }
   });
@@ -47,7 +47,6 @@ app.post("/files", (req, res) => {
 });
 
 app.use("/files", express.static(storage));
-// app.use('/static', express.static(path.join(__dirname, 'public')))
 
 app.use("/users", require("./users/routes"));
 
