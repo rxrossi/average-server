@@ -4,7 +4,7 @@ const config = require("../../config");
 const setupServer = require("../../app");
 const fetch = require("../../testHelpers/fetch");
 const mongoose = require("mongoose");
-const { HOST, PORT } = require("../../config");
+const { HOST, PORT, MONGODB_TEST } = require("../../config");
 
 let server;
 const BASE_URL = HOST + ":" + PORT;
@@ -19,7 +19,7 @@ const headers = {
 
 describe("Articles", () => {
   beforeEach(async done => {
-    server = await setupServer(PORT);
+    server = await setupServer(PORT, MONGODB_TEST);
     done();
   });
 

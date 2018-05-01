@@ -22,7 +22,8 @@ async function update(req, res) {
     }
     return res.json({
       response: {
-        message: "User updated"
+        message: "User updated",
+        user
       }
     });
   });

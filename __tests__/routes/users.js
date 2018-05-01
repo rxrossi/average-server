@@ -4,7 +4,7 @@ const setupServer = require("../../app");
 const fetch = require("../../testHelpers/fetch");
 const User = require("../../app/users/model");
 const mongoose = require("mongoose");
-const { HOST, PORT } = require("../../config");
+const { HOST, PORT, MONGODB_TEST } = require("../../config");
 
 let server;
 const BASE_URL = HOST + ":" + PORT;
@@ -19,7 +19,7 @@ const headers = {
 
 describe("Users routes", () => {
   beforeEach(async done => {
-    server = await setupServer(PORT);
+    server = await setupServer(PORT, MONGODB_TEST);
     done();
   });
 
@@ -166,7 +166,7 @@ describe("Users routes", () => {
   });
 
   describe("PUT on / (Update user)", () => {
-    it.only("can update user", async () => {
+    it("can update user", async () => {
       // create a user and get a token
       const user = {
         email: "user@mail.com",
@@ -191,6 +191,7 @@ describe("Users routes", () => {
       });
 
       expect(response.response.message).toBe("User updated");
+      expect(response.response.user).toMatchObject(updatedUser);
 
       const userOnDb = await User.findOne({ email: user.email });
       expect(userOnDb).toMatchObject(updatedUser);

@@ -3,7 +3,7 @@ const path = require("path");
 const FormData = require("form-data");
 const fetch = require("isomorphic-fetch");
 const setupServer = require("../../app");
-const { HOST, PORT } = require("../../config");
+const { HOST, PORT, MONGODB_TEST } = require("../../config");
 
 let server;
 
@@ -12,7 +12,7 @@ const FILES_URL = BASE_URL + "/files";
 
 describe("Routes tests", () => {
   beforeEach(async done => {
-    server = await setupServer(PORT);
+    server = await setupServer(PORT, MONGODB_TEST);
     done();
   });
 
