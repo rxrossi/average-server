@@ -1,21 +1,45 @@
 const mongoose = require("mongoose");
 var uniqueValidator = require("mongoose-unique-validator");
 const bcrypt = require("bcryptjs");
+const { HOST } = require("../../../config");
 
-const schema = mongoose.Schema({
-  email: {
-    type: String,
-    required: true,
-    lowercase: true,
-    unique: true
+var schemaOptions = {
+  toObject: {
+    virtuals: true
   },
-  password: {
-    type: String,
-    required: true,
-    select: false
+  toJSON: {
+    virtuals: true
+  }
+};
+
+const schema = new mongoose.Schema(
+  {
+    email: {
+      type: String,
+      required: true,
+      lowercase: true,
+      unique: true
+    },
+    password: {
+      type: String,
+      required: true,
+      select: false
+    },
+    photoLocation: {
+      path: String, // /files/photo.jpg
+      server: {
+        type: String,
+        enum: ["this", "extenal", "fileServerOne"] // this would be useful in case fileServerOne changes its address
+      }
+    },
+    name: String
   },
-  photo: String,
-  name: String
+  schemaOptions
+);
+
+schema.virtual("photo").get(function() {
+  const firstPart = this.photoLocation.server === "this" ? HOST : "";
+  return firstPart + this.photoLocation.path;
 });
 
 schema.pre("save", async function(next) {

@@ -48,7 +48,7 @@ async function getById(req, res) {
 
 async function update(req, res) {
   const user = await User.findById(req.user.id);
-  (user.photo = req.body.photo), (user.name = req.body.name);
+  (user.photoLocation = req.body.photoLocation), (user.name = req.body.name);
   await user.save(err => {
     if (err) {
       return res.json({
