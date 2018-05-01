@@ -4,8 +4,29 @@ const { signToken } = require("../../../passport");
 
 module.exports = {
   signIn,
-  signUp
+  signUp,
+  update
 };
+
+async function update(req, res) {
+  const user = await User.findById(req.user.id);
+  (user.photo = req.body.photo), (user.name = req.body.name);
+  await user.save(err => {
+    if (err) {
+      return res.json({
+        error: {
+          message: "User could not be updated",
+          details: err
+        }
+      });
+    }
+    return res.json({
+      response: {
+        message: "User updated"
+      }
+    });
+  });
+}
 
 function signIn(req, res) {
   if (req.user) {

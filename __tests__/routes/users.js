@@ -63,17 +63,15 @@ describe("Users routes", () => {
     });
 
     test("actually save to the database", async () => {
-      const { response } = await fetch(SIGNUP_ENDPOINT, {
-        method: "POST",
-        headers,
-        body: JSON.stringify({
-          email: "user@mail.com",
-          password: "pw1",
-          confirmPassword: "pw1"
-        })
-      });
+      const user = {
+        email: "user@mail.com",
+        password: "pw1",
+        confirmPassword: "pw1"
+      };
 
-      expect(response).toHaveProperty("token");
+      const token = await createUserAngGetToken(user);
+
+      expect(token).toBeTruthy();
     });
 
     test("do not allow duplicates", async () => {
@@ -166,4 +164,50 @@ describe("Users routes", () => {
       JWT.verify(token, config.JWT_SECRET);
     });
   });
+
+  describe("PUT on / (Update user)", () => {
+    it.only("can update user", async () => {
+      // create a user and get a token
+      const user = {
+        email: "user@mail.com",
+        password: "pw1",
+        confirmPassword: "pw1"
+      };
+      const token = await createUserAngGetToken(user);
+
+      // Act
+      const updatedUser = {
+        name: "Carlos D",
+        photo: "a valiad url"
+      };
+
+      const response = await fetch(USERS_ENDPOINT, {
+        method: "PUT",
+        headers: {
+          ...headers,
+          authorization: token
+        },
+        body: JSON.stringify(updatedUser)
+      });
+
+      expect(response.response.message).toBe("User updated");
+
+      const userOnDb = await User.findOne({ email: user.email });
+      expect(userOnDb).toMatchObject(updatedUser);
+    });
+  });
 });
+
+async function createUserAngGetToken(user) {
+  const { response } = await fetch(SIGNUP_ENDPOINT, {
+    method: "POST",
+    headers,
+    body: JSON.stringify(user)
+  });
+
+  if (response && response.token) {
+    return response.token;
+  }
+
+  return undefined;
+}
