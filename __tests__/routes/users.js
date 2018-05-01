@@ -9,6 +9,7 @@ const { HOST, PORT, MONGODB_TEST } = require("../../config");
 let server;
 const BASE_URL = HOST + ":" + PORT;
 const USERS_ENDPOINT = BASE_URL + "/users";
+const MYPROFILE_ENDPOINT = USERS_ENDPOINT + "/myprofile";
 const SIGNIN_ENDPOINT = USERS_ENDPOINT + "/signin";
 const SIGNUP_ENDPOINT = USERS_ENDPOINT + "/signup";
 
@@ -198,7 +199,7 @@ describe("Users routes", () => {
     });
   });
 
-  describe("GET on /:userID ", () => {
+  describe("GET on /users/:userID ", () => {
     it("returns a user", async () => {
       // Create a user
       const email = "user@mail.com";
@@ -215,6 +216,27 @@ describe("Users routes", () => {
 
       // Assert
       expect(response.user).toMatchObject({ email, name });
+    });
+  });
+
+  describe("GET /users/myprofile", () => {
+    it("returns user's profile", async () => {
+      const email = "user@mail.com";
+      const user = {
+        email,
+        password: "pw",
+        confirmPassword: "pw"
+      };
+      const token = await createUserAngGetToken(user);
+
+      const response = await fetch(MYPROFILE_ENDPOINT, {
+        headers: {
+          ...headers,
+          authorization: token
+        }
+      });
+
+      expect(response.response.user).toMatchObject({ email });
     });
   });
 });

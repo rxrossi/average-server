@@ -18,6 +18,10 @@ router
 router.route("/signup").post(validateBody(schemas.signUp), controller.signUp);
 
 router
+  .route("/myprofile")
+  .get(requireAuthMiddleware, controller.getCurrentUserProfile);
+
+router
   .route("/:id?")
   .put(requireAuthMiddleware, controller.update)
   .get(controller.getById);
