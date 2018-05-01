@@ -5,8 +5,27 @@ const { signToken } = require("../../../passport");
 module.exports = {
   signIn,
   signUp,
-  update
+  update,
+  getById
 };
+
+async function getById(req, res) {
+  const user = await User.findById(req.params.id);
+
+  if (user) {
+    return res.json({
+      response: {
+        user
+      }
+    });
+  }
+
+  return res.json({
+    error: {
+      message: "User not found"
+    }
+  });
+}
 
 async function update(req, res) {
   const user = await User.findById(req.user.id);

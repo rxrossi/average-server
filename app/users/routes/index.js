@@ -17,6 +17,9 @@ router
 
 router.route("/signup").post(validateBody(schemas.signUp), controller.signUp);
 
-router.route("/").put(requireAuthMiddleware, controller.update);
+router
+  .route("/:id?")
+  .put(requireAuthMiddleware, controller.update)
+  .get(controller.getById);
 
 module.exports = router;

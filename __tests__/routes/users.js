@@ -197,6 +197,26 @@ describe("Users routes", () => {
       expect(userOnDb).toMatchObject(updatedUser);
     });
   });
+
+  describe("GET on /:userID ", () => {
+    it("returns a user", async () => {
+      // Create a user
+      const email = "user@mail.com";
+      const name = "Carlos D";
+      const user = new User({
+        email,
+        password: "pw",
+        name
+      });
+      await user.save();
+
+      // ACT, send a get on /users/ID
+      const { response } = await fetch(`${USERS_ENDPOINT}/${user.id}`);
+
+      // Assert
+      expect(response.user).toMatchObject({ email, name });
+    });
+  });
 });
 
 async function createUserAngGetToken(user) {
