@@ -3,7 +3,8 @@ const Article = require("../model");
 module.exports = {
   getAll,
   getByLink,
-  create
+  create,
+  getUserArticles
 };
 
 const defaultPopulate = { path: "author" };
@@ -45,6 +46,15 @@ async function create(req, res) {
 
 async function getAll(req, res) {
   const articles = await Article.find({}).populate(defaultPopulate);
+  return res.json({
+    response: { articles }
+  });
+}
+
+async function getUserArticles(req, res) {
+  const articles = await Article.find({ author: req.user.id }).populate(
+    defaultPopulate
+  );
   return res.json({
     response: { articles }
   });

@@ -200,13 +200,13 @@ describe("Users routes", () => {
 
       const expectedUser = {
         name: updatedUser.name,
-        photo: HOST + "/photo.jpg"
+        photo: `${HOST}:${PORT}/photo.jpg`
       };
 
       expect(response.response.user).toMatchObject(expectedUser);
 
       const userOnDb = await User.findOne({ email: user.email });
-      // expect(userOnDb).toMatchObject(updatedUser);
+      expect(userOnDb).toMatchObject(updatedUser);
     });
   });
 

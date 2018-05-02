@@ -7,6 +7,9 @@ router
   .get(controller.getAll)
   .post(requireAuthMiddleware, controller.create);
 
+router
+  .route("/my-articles")
+  .get(requireAuthMiddleware, controller.getUserArticles);
 router.route("/:link").get(controller.getByLink);
 
 module.exports = router;

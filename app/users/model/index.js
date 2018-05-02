@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 var uniqueValidator = require("mongoose-unique-validator");
 const bcrypt = require("bcryptjs");
-const { HOST } = require("../../../config");
+const { HOST, PORT } = require("../../../config");
 
 var schemaOptions = {
   toObject: {
@@ -38,7 +38,8 @@ const schema = new mongoose.Schema(
 );
 
 schema.virtual("photo").get(function() {
-  const firstPart = this.photoLocation.server === "this" ? HOST : "";
+  const firstPart =
+    this.photoLocation.server === "this" ? `${HOST}:${PORT}` : "";
   return firstPart + this.photoLocation.path;
 });
 
