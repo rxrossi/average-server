@@ -68,10 +68,14 @@ async function update(req, res) {
 }
 
 function signIn(req, res) {
-  if (req.user) {
+  const { user } = req;
+  const userWithoutPw = user.toObject();
+  delete userWithoutPw.password;
+  if (user) {
     return res.json({
       response: {
-        token: signToken(req.user)
+        token: signToken(req.user),
+        user: userWithoutPw
       }
     });
   }
@@ -108,9 +112,13 @@ async function signUp(req, res) {
   try {
     await user.save((err, x) => {
       if (!err) {
+        // Remover Password to return
+        const userWithoutPw = x.toObject();
+        delete userWithoutPw.password;
+
         const token = signToken(user);
         return res.json({
-          response: { token }
+          response: { token, user: userWithoutPw }
         });
       }
     });
