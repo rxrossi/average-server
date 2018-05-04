@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const uuidv4 = require("uuid/v4");
 var uniqueValidator = require("mongoose-unique-validator");
 
 var schemaOptions = {
@@ -36,7 +37,8 @@ const schema = mongoose.Schema(
     },
     link: {
       type: String,
-      unique: true
+      unique: true,
+      default: uuidv4()
     },
     creationDate: {
       type: mongoose.Schema.Types.Date,

@@ -10,6 +10,10 @@ router
 router
   .route("/my-articles")
   .get(requireAuthMiddleware, controller.getUserArticles);
-router.route("/:link").get(controller.getByLink);
+
+router
+  .route("/:link")
+  .get(controller.getByLink)
+  .put(requireAuthMiddleware, controller.updateByLink);
 
 module.exports = router;

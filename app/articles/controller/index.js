@@ -4,26 +4,27 @@ module.exports = {
   getAll,
   getByLink,
   create,
-  getUserArticles
+  getUserArticles,
+  updateByLink
 };
 
 const defaultPopulate = { path: "author" };
 
 async function create(req, res) {
-  const { content } = req.body;
   const article = new Article({
     author: req.user.id,
     ...req.body
-  });
+  }).populate("author");
 
-  return article.save((err, x) => {
+  return article.save(async (err, x) => {
     if (x) {
-      const articleWithoutAuthor = x;
-      delete articleWithoutAuthor.author;
+      const articleWithAuthorObj = await Article.findById(x.id).populate(
+        "author"
+      );
       return res.json({
         response: {
           message: "Article saved",
-          article: x
+          article: articleWithAuthorObj
         }
       });
     }
@@ -44,6 +45,20 @@ async function create(req, res) {
     }
 
     return x;
+  });
+}
+
+async function updateByLink(req, res) {
+  const { link } = req.params;
+  const { body } = req;
+  delete body.author;
+
+  const article = await Article.findOne({ link }).populate("author");
+  article.set(body);
+  await article.save();
+
+  return res.json({
+    response: { message: "Article updated", article }
   });
 }
 

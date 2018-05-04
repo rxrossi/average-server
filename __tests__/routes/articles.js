@@ -66,8 +66,67 @@ describe("Articles", () => {
     // Assert
     expect(response.message).toEqual("Article saved");
     expect(response.article).toMatchObject(article);
+    expect(typeof response.article.author).toBe("object");
+
     const x = await Article.find({});
     expect(x[0].content).toBe(article.content);
+  });
+
+  test("can update and article (PUT)", async () => {
+    // Write the article, return it and the user
+    const { savedArticle, token } = await (async () => {
+      const article = {
+        content: "content",
+        tags: ["Auth", "Node.js"],
+        link: "title-number",
+        mainImg: "someUrl",
+        description: "Some nice description here",
+        title: "A good title",
+        published: true
+      };
+
+      const answer = await createUserAndThenArticle(article, {
+        getTokenToo: true
+      });
+
+      const {
+        response: { response: { article: savedArticle } },
+        token
+      } = answer;
+
+      return {
+        savedArticle,
+        token
+      };
+    })();
+
+    // Act
+    const updatedArticle = {
+      ...savedArticle,
+      content: "updated content",
+      author: "alskdj" // just to be sure that a article can't be stolen
+    };
+
+    const answer = await fetch(ARTICLES_ENDPOINT + `/${savedArticle.link}`, {
+      method: "PUT",
+      headers: {
+        ...headers,
+        authorization: token
+      },
+      body: JSON.stringify(updatedArticle)
+    });
+
+    const { response, error } = answer;
+    if (error) {
+      console.error(error);
+    }
+
+    // Assert
+    expect(answer.response.message).toEqual("Article updated");
+
+    // remove author of updatedArticle, then assert
+    delete updatedArticle.author;
+    expect(answer.response.article).toMatchObject(updatedArticle);
   });
 
   test("can GET by link", async () => {
