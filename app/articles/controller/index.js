@@ -18,9 +18,12 @@ async function create(req, res) {
 
   return article.save((err, x) => {
     if (x) {
+      const articleWithoutAuthor = x;
+      delete articleWithoutAuthor.author;
       return res.json({
         response: {
-          message: "Article saved"
+          message: "Article saved",
+          article: x
         }
       });
     }

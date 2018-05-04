@@ -48,19 +48,6 @@ describe("Articles", () => {
     expect(error.code).toEqual(401);
   });
 
-  test("can save and article if has at least a link", async () => {
-    // Prepare
-    const article = {
-      link: "some-unique-title"
-    };
-
-    // ACT
-    const { response } = await createUserAndThenArticle(article);
-
-    // Assert
-    expect(response.message).toEqual("Article saved");
-  });
-
   test("can save an article (POST)", async () => {
     // Prepare
     const article = {
@@ -70,8 +57,7 @@ describe("Articles", () => {
       mainImg: "someUrl",
       description: "Some nice description here",
       title: "A good title",
-      published: true,
-      creationDate: Date.now()
+      published: true
     };
 
     // Act
@@ -79,6 +65,7 @@ describe("Articles", () => {
 
     // Assert
     expect(response.message).toEqual("Article saved");
+    expect(response.article).toMatchObject(article);
     const x = await Article.find({});
     expect(x[0].content).toBe(article.content);
   });
