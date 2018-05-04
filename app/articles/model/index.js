@@ -18,29 +18,24 @@ const schema = mongoose.Schema(
       required: true
     },
     content: {
-      type: String,
-      required: true
+      type: String
     },
     tags: [String],
     published: {
       type: Boolean,
-      required: true
+      default: false
     },
     mainImg: {
-      type: String,
-      required: true
+      type: String
     },
     description: {
-      type: String,
-      required: true
+      type: String
     },
     title: {
-      type: String,
-      required: true
+      type: String
     },
     link: {
       type: String,
-      required: true,
       unique: true
     },
     creationDate: {

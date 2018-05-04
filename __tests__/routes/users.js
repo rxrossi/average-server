@@ -109,7 +109,7 @@ describe("Users routes", () => {
   });
 
   describe("SignIn", async () => {
-    test("with incorrect credentials", async () => {
+    test.only("with incorrect credentials", async () => {
       const { error } = await fetch(SIGNIN_ENDPOINT, {
         method: "POST",
         headers,
