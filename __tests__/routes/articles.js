@@ -48,27 +48,17 @@ describe("Articles", () => {
     expect(error.code).toEqual(401);
   });
 
-  test("thows a nice error on invalid format (POST)", async () => {
+  test("can save and article if has at least a link", async () => {
     // Prepare
     const article = {
-      content: "content"
+      link: "some-unique-title"
     };
 
     // ACT
-    const { error } = await createUserAndThenArticle(article, {
-      expectError: true
-    });
+    const { response } = await createUserAndThenArticle(article);
 
     // Assert
-    expect(error.code).toEqual(422);
-    expect(error.message).toEqual("Could not save the article");
-    expect(error.fields).toEqual({
-      published: "Path `published` is required.",
-      mainImg: "Path `mainImg` is required.",
-      title: "Path `title` is required.",
-      description: "Path `description` is required.",
-      link: "Path `link` is required."
-    });
+    expect(response.message).toEqual("Article saved");
   });
 
   test("can save an article (POST)", async () => {

@@ -69,9 +69,9 @@ async function update(req, res) {
 
 function signIn(req, res) {
   const { user } = req;
-  const userWithoutPw = user.toObject();
-  delete userWithoutPw.password;
   if (user) {
+    const userWithoutPw = user.toObject();
+    delete userWithoutPw.password;
     return res.json({
       response: {
         token: signToken(req.user),
