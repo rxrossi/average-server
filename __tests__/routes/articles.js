@@ -72,6 +72,37 @@ describe("Articles", () => {
     expect(x[0].content).toBe(article.content);
   });
 
+  test("GET on / does not return unpublished articles", async () => {
+    // Prepare
+    const article = {
+      content: "content",
+      tags: ["Auth", "Node.js"],
+      link: "title-number",
+      mainImg: "someUrl",
+      description: "Some nice description here",
+      title: "A good title",
+      published: false
+    };
+    const article2 = {
+      content: "content2",
+      tags: ["Node.js"],
+      link: "title-number2",
+      mainImg: "someUrl",
+      description: "Some nice description here",
+      title: "A good title for article 2",
+      published: true
+    };
+
+    // Act
+    await createUserAndThenArticle(article);
+    await createUserAndThenArticle(article2);
+
+    const { response } = await fetch(ARTICLES_ENDPOINT);
+
+    expect(response.articles.length).toEqual(1);
+    expect(response.articles[0]).toMatchObject(article2);
+  });
+
   test("can update and article (PUT)", async () => {
     // Write the article, return it and the user
     const { savedArticle, token } = await (async () => {

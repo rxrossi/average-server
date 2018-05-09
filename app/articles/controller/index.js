@@ -63,7 +63,9 @@ async function updateByLink(req, res) {
 }
 
 async function getAll(req, res) {
-  const articles = await Article.find({}).populate(defaultPopulate);
+  const articles = await Article.find({ published: true }).populate(
+    defaultPopulate
+  );
   return res.json({
     response: { articles }
   });
