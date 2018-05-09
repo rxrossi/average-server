@@ -5,7 +5,8 @@ module.exports = {
   getByLink,
   create,
   getUserArticles,
-  updateByLink
+  updateByLink,
+  deleteByLink
 };
 
 const defaultPopulate = { path: "author" };
@@ -54,11 +55,47 @@ async function updateByLink(req, res) {
   delete body.author;
 
   const article = await Article.findOne({ link }).populate("author");
+  if (article.author.id !== req.user.id) {
+    return res.json({
+      error: {
+        message: "This article does not belong to the authenticated user"
+      }
+    });
+  }
   article.set(body);
   await article.save();
 
   return res.json({
     response: { message: "Article updated", article }
+  });
+}
+
+async function getAll(req, res) {
+  const articles = await Article.find({ published: true }).populate(
+    defaultPopulate
+  );
+  return res.json({
+    response: { articles }
+  });
+}
+
+async function deleteByLink(req, res) {
+  const { link } = req.params;
+
+  const article = await Article.findOne({ link });
+
+  if (article.author.toString() !== req.user.id) {
+    return res.json({
+      error: {
+        message: "This article does not belong to the authenticated user"
+      }
+    });
+  }
+
+  article.remove();
+
+  return res.json({
+    response: { message: "Article deleted" }
   });
 }
 

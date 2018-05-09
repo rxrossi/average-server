@@ -181,6 +181,44 @@ describe("Articles", () => {
     expect(response.article).toMatchObject(article);
   });
 
+  test("can DELETE by link", async () => {
+    // Prepare
+    const article = {
+      content: "content",
+      tags: ["Auth", "Node.js"],
+      link: "title-number",
+      mainImg: "someUrl",
+      description: "Some nice description here",
+      title: "A good title",
+      published: true,
+      creationDate: "2018-04-28T22:51:56.167Z"
+    };
+    const { response: response1, token } = await createUserAndThenArticle(
+      article,
+      {
+        getTokenToo: true
+      }
+    );
+    const articleLink = response1.response.article.link;
+
+    // Act
+    const response2 = await fetch(ARTICLES_ENDPOINT + `/${articleLink}`, {
+      method: "DELETE",
+      headers: {
+        ...headers,
+        authorization: token
+      }
+    });
+
+    // Assert message
+    expect(response2.response.message).toEqual("Article deleted");
+    // Assert that cannot find the deleted article
+    const { response: response3 } = await fetch(
+      `${ARTICLES_ENDPOINT}/${article.link}`
+    );
+    expect(response3.article).toBe(null);
+  });
+
   test("Article.link are unique", async () => {
     // Prepare
     const article = {

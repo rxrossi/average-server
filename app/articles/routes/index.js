@@ -14,6 +14,7 @@ router
 router
   .route("/:link")
   .get(controller.getByLink)
-  .put(requireAuthMiddleware, controller.updateByLink);
+  .put(requireAuthMiddleware, controller.updateByLink)
+  .delete(requireAuthMiddleware, controller.deleteByLink);
 
 module.exports = router;
