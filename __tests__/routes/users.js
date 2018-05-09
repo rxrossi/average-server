@@ -109,7 +109,7 @@ describe("Users routes", () => {
   });
 
   describe("SignIn", async () => {
-    test.only("with incorrect credentials", async () => {
+    test("with incorrect credentials", async () => {
       const { error } = await fetch(SIGNIN_ENDPOINT, {
         method: "POST",
         headers,
@@ -207,6 +207,60 @@ describe("Users routes", () => {
 
       const userOnDb = await User.findOne({ email: user.email });
       expect(userOnDb).toMatchObject(updatedUser);
+    });
+  });
+
+  describe("PATCH on / (updates user)", () => {
+    it("can update user", async () => {
+      // create a user and get a token
+      const user = {
+        email: "user@mail.com",
+        password: "pw1",
+        confirmPassword: "pw1"
+      };
+      const token = await createUserAngGetToken(user);
+
+      const updatedUser = {
+        name: "Carlos D",
+        photoLocation: {
+          server: "this",
+          path: "/photo.jpg"
+        }
+      };
+
+      // Uses put to update the user
+      await fetch(USERS_ENDPOINT, {
+        method: "PUT",
+        headers: {
+          ...headers,
+          authorization: token
+        },
+        body: JSON.stringify(updatedUser)
+      });
+
+      // Act
+      const patchedUser = {
+        name: "Carlos Dru"
+      };
+
+      const response = await fetch(USERS_ENDPOINT, {
+        method: "PATCH",
+        headers: {
+          ...headers,
+          authorization: token
+        },
+        body: JSON.stringify(patchedUser)
+      });
+
+      // Assert
+      const expectedUser = {
+        name: patchedUser.name,
+        photo: `${HOST}:${PORT}/photo.jpg`
+      };
+      expect(response.response.user).toMatchObject(expectedUser);
+
+      const userOnDb = await User.findOne({ email: user.email });
+      expect(userOnDb).toMatchObject(expectedUser);
     });
   });
 

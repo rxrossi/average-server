@@ -22,8 +22,10 @@ router
   .get(requireAuthMiddleware, controller.getCurrentUserProfile);
 
 router
-  .route("/:id?")
+  .route("/")
   .put(requireAuthMiddleware, controller.update)
-  .get(controller.getById);
+  .patch(requireAuthMiddleware, controller.patch);
+
+router.route("/:id?").get(controller.getById);
 
 module.exports = router;

@@ -6,6 +6,7 @@ module.exports = {
   signIn,
   signUp,
   update,
+  patch,
   getById,
   getCurrentUserProfile
 };
@@ -49,6 +50,30 @@ async function getById(req, res) {
 async function update(req, res) {
   const user = await User.findById(req.user.id);
   (user.photoLocation = req.body.photoLocation), (user.name = req.body.name);
+  await user.save(err => {
+    if (err) {
+      return res.json({
+        error: {
+          message: "User could not be updated",
+          details: err
+        }
+      });
+    }
+    return res.json({
+      response: {
+        message: "User updated",
+        user
+      }
+    });
+  });
+}
+
+async function patch(req, res) {
+  const user = await User.findById(req.user.id);
+  user.photoLocation = req.body.photoLocation
+    ? req.body.photoLocation
+    : user.photoLocation;
+  user.name = req.body.name ? req.body.name : user.name;
   await user.save(err => {
     if (err) {
       return res.json({
