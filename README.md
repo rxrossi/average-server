@@ -1,70 +1,27 @@
-# Sign in
+# Average server
 
-route: '/users/signin'
-method: POST
+Server for [average client](https://github.com/rxrossi/average-client), a clone of [Medium](https://medium.com/)
 
-```js
-body: {
-  email: String;
-  password: String;
-}
-```
+## Stack
 
-## Successful response
+* Express
+* Mongoose
+* Jest
+* Passport-JWT
 
-```js
-{
-  response: {
-    token: String;
-  }
-}
-```
+## Current-status
 
-## Error example
+Working correctly with the client
 
-```js
-{
-  error: {
-    message: String;
-    fields: {
-      fieldName: String;
-    }
-  }
-}
-```
+Integration tests for every route, including file-upload
 
-# Sign Up
+## Running locally
 
-route: '/users/signup'
-method: POST
+* Clone the repo
+* Edit config.js so it correctly set environment
+* npm install
+* npm start
 
-```js
-body: {
-  email,
-  password,
-  confirmPassword,
-}
-```
+## Routes documenting
 
-## Successful response
-
-```js
-{
-  response: {
-    token: String;
-  }
-}
-```
-
-## Error example
-
-```js
-{
-  error: {
-    message: String;
-    fields: {
-      fieldName: String;
-    }
-  }
-}
-```
+Needs to be done yet, but most of it routes can easily be understood reading the integration tests
