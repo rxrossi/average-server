@@ -1,7 +1,7 @@
-const mongoose = require("mongoose");
-var uniqueValidator = require("mongoose-unique-validator");
-const bcrypt = require("bcryptjs");
-const { HOST, PORT } = require("../../../config");
+const mongoose = require('mongoose')
+var uniqueValidator = require('mongoose-unique-validator')
+const bcrypt = require('bcryptjs')
+const { HOST, PORT } = require('../../../config')
 
 var schemaOptions = {
   toObject: {
@@ -10,7 +10,7 @@ var schemaOptions = {
   toJSON: {
     virtuals: true
   }
-};
+}
 
 const schema = new mongoose.Schema(
   {
@@ -29,43 +29,42 @@ const schema = new mongoose.Schema(
       path: String, // /files/photo.jpg
       server: {
         type: String,
-        enum: ["this", "extenal", "fileServerOne"] // this would be useful in case fileServerOne changes its address
+        enum: ['this', 'extenal', 'fileServerOne'] // this would be useful in case fileServerOne changes its address
       }
     },
     name: String
   },
   schemaOptions
-);
+)
 
-schema.virtual("photo").get(function() {
-  const firstPart =
-    this.photoLocation.server === "this" ? `${HOST}:${PORT}` : "";
-  return firstPart + this.photoLocation.path;
-});
+schema.virtual('photo').get(function() {
+  const firstPart = this.photoLocation.server === 'this' ? `${HOST}` : ''
+  return firstPart + this.photoLocation.path
+})
 
-schema.pre("save", async function(next) {
+schema.pre('save', async function(next) {
   if (this.password) {
     try {
-      const salt = await bcrypt.genSalt(10);
-      this.password = await bcrypt.hash(this.password, salt);
-      next();
+      const salt = await bcrypt.genSalt(10)
+      this.password = await bcrypt.hash(this.password, salt)
+      next()
     } catch (error) {
-      next(error);
+      next(error)
     }
   }
-  next();
-});
+  next()
+})
 
 schema.methods.isValidPassword = async function(newPassword) {
   try {
-    return await bcrypt.compare(newPassword, this.password);
+    return await bcrypt.compare(newPassword, this.password)
   } catch (error) {
-    throw new Error(error);
+    throw new Error(error)
   }
-};
+}
 
-schema.plugin(uniqueValidator);
+schema.plugin(uniqueValidator)
 
-const User = mongoose.model("User", schema);
+const User = mongoose.model('User', schema)
 
-module.exports = User;
+module.exports = User
